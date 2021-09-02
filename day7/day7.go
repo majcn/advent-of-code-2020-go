@@ -15,7 +15,7 @@ func parseData() DataType {
 	dataSplit := strings.Split(data, "\n")
 
 	r1 := regexp.MustCompile("^(.*) bags contain (.*)$")
-	r2 := regexp.MustCompile("^([0-9]+) (.*) (bag|bags)\\.?$")
+	r2 := regexp.MustCompile(`^(\d+) (.*) (?:bag|bags)\.?$`)
 
 	result := make(DataType)
 	for _, line := range dataSplit {
@@ -24,8 +24,7 @@ func parseData() DataType {
 
 		value := make(map[string]string)
 		for _, xx := range strings.Split(valueAsStr, ", ") {
-			match2 := r2.FindStringSubmatch(xx)
-			if match2 != nil {
+			if match2 := r2.FindStringSubmatch(xx); match2 != nil {
 				value[match2[2]] = match2[1]
 			}
 		}
@@ -60,8 +59,7 @@ func solvePart1(data DataType) (rc int) {
 func solvePart2(data DataType) (rc int) {
 	var f func(string) int
 	f = func(key string) int {
-		_, ok := data[key]
-		if !ok {
+		if _, ok := data[key]; !ok {
 			return 1
 		}
 

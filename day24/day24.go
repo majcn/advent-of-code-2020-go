@@ -3,6 +3,7 @@ package main
 import (
 	. "../util"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -14,17 +15,7 @@ func parseData() DataType {
 
 	result := make(DataType, len(dataSplit))
 	for i, line := range dataSplit {
-		tmp := make([]string, 0, len(line))
-		for ii := 0; ii < len(line); ii++ {
-			directionStr := string(line[ii])
-			if directionStr == "n" || directionStr == "s" {
-				directionStr += string(line[ii+1])
-				ii++
-			}
-
-			tmp = append(tmp, directionStr)
-		}
-		result[i] = tmp
+		result[i] = regexp.MustCompile(`(nw|ne|e|se|sw|w)`).FindAllString(line, -1)
 	}
 
 	return result

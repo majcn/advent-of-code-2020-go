@@ -3,7 +3,6 @@ package main
 import (
 	. "../util"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -30,36 +29,29 @@ func parseData() DataType {
 	data := FetchInputData(16)
 	dataSplit := strings.Split(data, "\n\n")
 
-	typesLineRe := regexp.MustCompile("^(.*): ([0-9]+)-([0-9]+) or ([0-9]+)-([0-9]+)$")
 	typeLines := strings.Split(dataSplit[0], "\n")
 	types := make([]Type, len(typeLines))
 	for i, typesLine := range typeLines {
-		match := typesLineRe.FindStringSubmatch(typesLine)
-		name := match[1]
-		ruleFrom1, _ := strconv.Atoi(match[2])
-		ruleTo1, _ := strconv.Atoi(match[3])
-		ruleFrom2, _ := strconv.Atoi(match[4])
-		ruleTo2, _ := strconv.Atoi(match[5])
-
-		types[i] = Type{name, Rule{ruleFrom1, ruleTo1, ruleFrom2, ruleTo2}}
+		typesLineSplit := strings.Split(typesLine, ": ")
+		types[i].name = typesLineSplit[0]
+		_, _ = fmt.Sscanf(typesLineSplit[1], "%d-%d or %d-%d", &types[i].rule.from1, &types[i].rule.to1, &types[i].rule.from2, &types[i].rule.to2)
 	}
 
 	myTicketLine := strings.Split(dataSplit[1], "\n")[1]
-	myTicket := make([]int, 0)
-	for _, v := range strings.Split(myTicketLine, ",") {
-		vi, _ := strconv.Atoi(v)
-		myTicket = append(myTicket, vi)
+	myTicketLineSplit := strings.Split(myTicketLine, ",")
+	myTicket := make([]int, len(myTicketLineSplit))
+	for i, v := range myTicketLineSplit {
+		myTicket[i], _ = strconv.Atoi(v)
 	}
 
 	nearbyTicketsLines := strings.Split(dataSplit[2], "\n")[1:]
 	nearbyTickets := make([][]int, len(nearbyTicketsLines))
 	for i, nearbyTicketsLine := range nearbyTicketsLines {
-		tmp := make([]int, 0)
-		for _, v := range strings.Split(nearbyTicketsLine, ",") {
-			vi, _ := strconv.Atoi(v)
-			tmp = append(tmp, vi)
+		nearbyTicketsLineSplit := strings.Split(nearbyTicketsLine, ",")
+		nearbyTickets[i] = make([]int, len(nearbyTicketsLineSplit))
+		for ii, v := range nearbyTicketsLineSplit {
+			nearbyTickets[i][ii], _ = strconv.Atoi(v)
 		}
-		nearbyTickets[i] = tmp
 	}
 
 	return DataType{types, myTicket, nearbyTickets}

@@ -12,13 +12,9 @@ func parseData() DataType {
 	data := FetchInputData(6)
 	dataSplit := strings.Split(data, "\n\n")
 
-	result := make(DataType, 0)
-	for _, line := range dataSplit {
-		if line == "" {
-			continue
-		}
-
-		result = append(result, strings.Fields(line))
+	result := make(DataType, len(dataSplit))
+	for i, line := range dataSplit {
+		result[i] = strings.Fields(line)
 	}
 
 	return result

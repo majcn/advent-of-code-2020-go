@@ -3,7 +3,6 @@ package main
 import (
 	. "../util"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -20,10 +19,7 @@ func parseData() DataType {
 
 	result := make(DataType, len(dataSplit))
 	for i, v := range dataSplit {
-		action := v[0]
-		value, _ := strconv.Atoi(v[1:])
-
-		result[i] = Instruction{action, value}
+		_, _ = fmt.Sscanf(v, "%c%d", &result[i].action, &result[i].value)
 	}
 
 	return result
@@ -55,16 +51,12 @@ func nextDirectionPart1(direction byte, code byte, value int) (n byte) {
 		switch n {
 		case 'N':
 			n = 'E'
-			break
 		case 'E':
 			n = 'S'
-			break
 		case 'S':
 			n = 'W'
-			break
 		case 'W':
 			n = 'N'
-			break
 		}
 		value -= 90
 	}
@@ -92,11 +84,12 @@ func solvePart1(data DataType) (rc int) {
 	position := Location{}
 
 	for _, instruction := range data {
-		if instruction.action == 'R' || instruction.action == 'L' {
+		switch instruction.action {
+		case 'L', 'R':
 			direction = nextDirectionPart1(direction, instruction.action, instruction.value)
-		} else if instruction.action == 'F' {
+		case 'F':
 			position = nextLocation(position, direction, instruction.value)
-		} else {
+		default:
 			position = nextLocation(position, instruction.action, instruction.value)
 		}
 	}
@@ -109,11 +102,12 @@ func solvePart2(data DataType) (rc int) {
 	position := Location{}
 
 	for _, instruction := range data {
-		if instruction.action == 'R' || instruction.action == 'L' {
+		switch instruction.action {
+		case 'L', 'R':
 			waypoint = nextWaypointRotatePart2(waypoint, instruction.action, instruction.value)
-		} else if instruction.action == 'F' {
+		case 'F':
 			position = position.Add(waypoint.Mul(instruction.value))
-		} else {
+		default:
 			waypoint = nextLocation(waypoint, instruction.action, instruction.value)
 		}
 	}

@@ -54,15 +54,6 @@ func (d *Deck) Score() (result int) {
 	return
 }
 
-func (d *Deck) String() string {
-	var sb strings.Builder
-	sb.Grow(len(d.elements) * 2)
-	for _, v := range d.elements {
-		_, _ = fmt.Fprintf(&sb, "%d", v)
-	}
-	return sb.String()
-}
-
 func (d *Deck) Copy(n int) Deck {
 	newElements := make([]int, n)
 	for i := 0; i < n; i++ {
@@ -104,10 +95,10 @@ func playAGame(player1 *Deck, player2 *Deck) {
 			return
 		}
 
-		hash := player1.String() + "|" + player2.String()
+		hash := fmt.Sprint([][]int{player1.elements, player2.elements})
 		if _, ok := cache[hash]; ok {
-			player1.elements = make([]int, 1)
-			player2.elements = make([]int, 0)
+			player1.elements = []int{1}
+			player2.elements = []int{}
 			return
 		}
 		cache[hash] = true

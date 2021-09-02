@@ -21,7 +21,6 @@ func parseData() DataType {
 	data := FetchInputData(21)
 	dataSplit := strings.Split(data, "\n")
 
-	allAllergens := EmptyStringSet()
 	foods := make([]Food, len(dataSplit))
 	for i, line := range dataSplit {
 		part := strings.Split(line[:len(line)-1], " (contains ")
@@ -29,7 +28,11 @@ func parseData() DataType {
 		ingredients := NewStringSet(strings.Split(part[0], " "))
 		allergens := NewStringSet(strings.Split(part[1], ", "))
 		foods[i] = Food{ingredients, allergens}
-		for allergen := range foods[i].allergens {
+	}
+
+	allAllergens := NewStringSet([]string{})
+	for _, food := range foods {
+		for allergen := range food.allergens {
 			allAllergens.Add(allergen)
 		}
 	}

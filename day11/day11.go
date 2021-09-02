@@ -11,11 +11,13 @@ var MAXX int
 var MAXY int
 
 const (
-	StateEmptySeat    = 1
-	StateOccupiedSeat = 2
+	StateEmptySeat    SeatState = 1 // iota
+	StateOccupiedSeat SeatState = 2 // iota
 )
 
-type DataType map[Location]int
+type SeatState int
+
+type DataType map[Location]SeatState
 
 func parseData() DataType {
 	data := FetchInputData(11)
@@ -62,7 +64,7 @@ func findNeighboursOccupiedInf(data DataType, location Location) (rc int) {
 	return
 }
 
-func applyRulesPart1(data DataType, location Location) int {
+func applyRulesPart1(data DataType, location Location) SeatState {
 	neighboursOccupied := findNeighboursOccupied(data, location)
 
 	if data[location] == StateEmptySeat && neighboursOccupied == 0 {
@@ -76,7 +78,7 @@ func applyRulesPart1(data DataType, location Location) int {
 	return data[location]
 }
 
-func applyRulesPart2(data DataType, location Location) int {
+func applyRulesPart2(data DataType, location Location) SeatState {
 	neighboursOccupiedInf := findNeighboursOccupiedInf(data, location)
 
 	if data[location] == StateEmptySeat && neighboursOccupiedInf == 0 {
@@ -90,7 +92,7 @@ func applyRulesPart2(data DataType, location Location) int {
 	return data[location]
 }
 
-func transform(data DataType, applyRules func(DataType, Location) int) DataType {
+func transform(data DataType, applyRules func(DataType, Location) SeatState) DataType {
 	newData := make(DataType, len(data))
 	for location := range data {
 		newData[location] = applyRules(data, location)
@@ -108,7 +110,7 @@ func countOccupied(data DataType) (rc int) {
 	return
 }
 
-func solve(data DataType, applyRules func(DataType, Location) int) int {
+func solve(data DataType, applyRules func(DataType, Location) SeatState) int {
 	oldData := transform(data, applyRules)
 	newData := transform(oldData, applyRules)
 

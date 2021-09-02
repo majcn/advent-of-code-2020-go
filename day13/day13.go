@@ -3,7 +3,7 @@ package main
 import (
 	. "../util"
 	"fmt"
-	"math/big"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -33,26 +33,7 @@ func parseData() DataType {
 		}
 	}
 
-	result := DataType{
-		myTimestamp: myTimestamp,
-		buses:       buses,
-	}
-
-	return result
-}
-
-func ChineseRemainderTheorem(a []*big.Int, n []*big.Int) *big.Int {
-	p := new(big.Int).Set(n[0])
-	for _, n1 := range n[1:] {
-		p.Mul(p, n1)
-	}
-	var x, q, s, z big.Int
-	for i, n1 := range n {
-		q.Div(p, n1)
-		z.GCD(nil, &s, n1, &q)
-		x.Add(&x, s.Mul(a[i], s.Mul(&s, &q)))
-	}
-	return x.Mod(&x, p)
+	return DataType{myTimestamp, buses}
 }
 
 func calculateWaitingTime(myTimestamp int, busId int) int {
@@ -61,7 +42,7 @@ func calculateWaitingTime(myTimestamp int, busId int) int {
 
 func solvePart1(data DataType) (rc int) {
 	minBusId := data.buses[0].id
-	minWaitingTime := calculateWaitingTime(data.myTimestamp, minBusId)
+	minWaitingTime := math.MaxInt64
 
 	for _, bus := range data.buses {
 		waitingTime := calculateWaitingTime(data.myTimestamp, bus.id)
@@ -74,16 +55,16 @@ func solvePart1(data DataType) (rc int) {
 	return minBusId * minWaitingTime
 }
 
-func solvePart2(data DataType) (rc *big.Int) {
-	a := make([]*big.Int, 0, len(data.buses))
-	n := make([]*big.Int, 0, len(data.buses))
+func solvePart2(data DataType) (rc int) {
+	step := 1
 	for _, bus := range data.buses {
-		a = append(a, big.NewInt(int64(-bus.departTimestamp)))
-		n = append(n, big.NewInt(int64(bus.id)))
+		for (rc+bus.departTimestamp)%bus.id != 0 {
+			rc += step
+		}
+		step *= bus.id
 	}
 
-	x := ChineseRemainderTheorem(a, n)
-	return x
+	return
 }
 
 func main() {

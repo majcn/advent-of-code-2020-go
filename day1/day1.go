@@ -22,8 +22,8 @@ func parseData() DataType {
 }
 
 func solvePart1(data DataType) (rc int) {
-	for _, v1 := range data {
-		for _, v2 := range data {
+	for i, v1 := range data {
+		for _, v2 := range data[i+1:] {
 			if v1+v2 == 2020 {
 				return v1 * v2
 			}
@@ -34,9 +34,9 @@ func solvePart1(data DataType) (rc int) {
 }
 
 func solvePart2(data DataType) (rc int) {
-	for _, v1 := range data {
-		for _, v2 := range data {
-			for _, v3 := range data {
+	for i, v1 := range data {
+		for j, v2 := range data[i+1:] {
+			for _, v3 := range data[j+1:] {
 				if v1+v2+v3 == 2020 {
 					return v1 * v2 * v3
 				}

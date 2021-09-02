@@ -10,10 +10,6 @@ func NewStringSet(s []string) StringSet {
 	return result
 }
 
-func EmptyStringSet() StringSet {
-	return make(StringSet, 0)
-}
-
 func (s *StringSet) Add(el string) {
 	(*s)[el] = voidVar
 }

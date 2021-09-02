@@ -22,8 +22,8 @@ func parseData() DataType {
 }
 
 func isNumberValid(part []int, number int) bool {
-	for _, v1 := range part {
-		for _, v2 := range part {
+	for i, v1 := range part {
+		for _, v2 := range part[i+1:] {
 			if v1+v2 == number {
 				return true
 			}

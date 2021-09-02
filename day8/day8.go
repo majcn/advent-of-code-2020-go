@@ -3,7 +3,6 @@ package main
 import (
 	. "../util"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -14,55 +13,30 @@ func parseData() DataType {
 	dataSplit := strings.Split(data, "\n")
 
 	result := make([]Command, len(dataSplit))
-	for i := 0; i < len(dataSplit); i++ {
-		fields := strings.Fields(dataSplit[i])
-		command := new(Command)
-		command.cmd = fields[0]
-		command.value, _ = strconv.Atoi(fields[1])
-		result[i] = *command
+	for i, v := range dataSplit {
+		_, _ = fmt.Sscanf(v, "%s %d", &result[i].cmd, &result[i].value)
 	}
-
 	return result
 }
 
 func solvePart1(data DataType) (rc int) {
-	p := Program{make(map[int]bool), data, 0, 0, 0}
+	p := NewProgram(data)
+	rc, _ = p.run()
 
-	for {
-		p.step()
-		if p.isInLoop() {
-			return p.accumulator
-		}
-	}
+	return
 }
 
 func solvePart2(data DataType) (rc int) {
-	changes := [][]string{
-		{"jmp", "nop"},
-		{"nop", "jmp"},
-	}
+	replacer := strings.NewReplacer("jmp", "nop", "nop", "jmp")
 
-	for _, change := range changes {
-		changeFrom, changeTo := change[0], change[1]
-		for i := 0; i < len(data); i++ {
-			if data[i].cmd != changeFrom {
-				continue
-			}
+	for i := 0; i < len(data); i++ {
+		cdata := make(DataType, len(data))
+		copy(cdata, data)
+		cdata[i].cmd = replacer.Replace(cdata[i].cmd)
 
-			cdata := make(DataType, len(data))
-			copy(cdata, data)
-			cdata[i].cmd = changeTo
-
-			p := Program{make(map[int]bool), cdata, 0, 0, 0}
-			for {
-				p.step()
-				if p.isFinished() {
-					return p.accumulator
-				}
-				if p.isInLoop() {
-					break
-				}
-			}
+		p := NewProgram(cdata)
+		if result, err := p.run(); err == nil {
+			return result
 		}
 	}
 

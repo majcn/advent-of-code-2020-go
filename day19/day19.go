@@ -20,12 +20,11 @@ func parseData() DataType {
 		ruleAsStrSplit := strings.Split(v, ": ")
 		left := ruleAsStrSplit[0]
 
-		right := ruleAsStrSplit[1]
-		right = strings.ReplaceAll(right, "\"", "")
+		right := strings.ReplaceAll(ruleAsStrSplit[1], `"`, "")
 		rightAsSplit := strings.Split(right, " | ")
 
 		rules[left] = make([][]string, len(rightAsSplit))
-		for i, el := range strings.Split(right, " | ") {
+		for i, el := range rightAsSplit {
 			rules[left][i] = strings.Fields(el)
 		}
 	}

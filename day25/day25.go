@@ -25,17 +25,12 @@ func calculateNextVal(val int, subjectNumber int) int {
 	return (val * subjectNumber) % 20201227
 }
 
-func findLoopSize(goal int) int {
-	subjectNumber := 7
-
-	val := 1
-	loopSize := 1
-	for val != goal {
-		val = calculateNextVal(val, subjectNumber)
+func findLoopSize(goal int) (loopSize int) {
+	for val := 1; val != goal; val = calculateNextVal(val, 7) {
 		loopSize++
 	}
 
-	return loopSize - 1
+	return
 }
 
 func solvePart1(data DataType) (rc int) {

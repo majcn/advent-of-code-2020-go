@@ -37,8 +37,7 @@ func findInactiveNeighbors(data map[LocationXYXW]bool, el LocationXYXW, dimensio
 
 	minDw, maxDw := 0, 0
 	if dimensions == 4 {
-		minDw = -1
-		maxDw = 1
+		minDw, maxDw = -1, 1
 	}
 
 	for dw := minDw; dw <= maxDw; dw++ {

@@ -19,18 +19,14 @@ func parseData() DataType {
 	data := FetchInputData(4)
 	dataSplit := strings.Split(data, "\n\n")
 
-	result := make([]Passport, 0)
-	for _, line := range dataSplit {
-		if line == "" {
-			continue
-		}
-
+	result := make([]Passport, len(dataSplit))
+	for i, line := range dataSplit {
 		tmp := make(Passport)
 		for _, entry := range strings.Fields(line) {
 			s := strings.Split(entry, ":")
 			tmp[s[0]] = s[1]
 		}
-		result = append(result, tmp)
+		result[i] = tmp
 	}
 
 	return DataType{result, []string{"byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"}}
@@ -61,7 +57,7 @@ func isPassportEntryValid(key string, value string) bool {
 		return 2020 <= v && v <= 2030
 
 	case "hgt":
-		r := regexp.MustCompile("^([0-9]+)(cm|in)$")
+		r := regexp.MustCompile(`^(\d+)(cm|in)$`)
 		match := r.FindStringSubmatch(value)
 
 		if match == nil {
@@ -76,15 +72,15 @@ func isPassportEntryValid(key string, value string) bool {
 		}
 
 	case "hcl":
-		r := regexp.MustCompile("^#([0-9]|[a-f]){6}$")
+		r := regexp.MustCompile(`^#(\d|[a-f]){6}$`)
 		return r.MatchString(value)
 
 	case "ecl":
-		r := regexp.MustCompile("^(amb|blu|brn|gry|grn|hzl|oth)$")
+		r := regexp.MustCompile("^amb|blu|brn|gry|grn|hzl|oth$")
 		return r.MatchString(value)
 
 	case "pid":
-		r := regexp.MustCompile("^([0-9]){9}$")
+		r := regexp.MustCompile(`^\d{9}$`)
 		return r.MatchString(value)
 
 	case "cid":
@@ -108,15 +104,14 @@ func isPassportValid(passport Passport, requiredKeys []string) bool {
 	return true
 }
 
-func solve(data DataType, validator func(Passport, []string) bool) int {
-	result := 0
+func solve(data DataType, validator func(Passport, []string) bool) (rc int) {
 	for _, passport := range data.passports {
 		if validator(passport, data.requiredKeys) {
-			result++
+			rc++
 		}
 	}
 
-	return result
+	return
 }
 
 func solvePart1(data DataType) (rc int) {
